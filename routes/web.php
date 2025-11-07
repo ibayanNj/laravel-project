@@ -26,9 +26,9 @@ Route::middleware('auth')->group(function () {
 });
 
 // Redirect root to dashboard or login
-Route::get('/', function () {
-    return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
-});
+// Route::get('/', function () {
+//     return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
+// });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth'])
