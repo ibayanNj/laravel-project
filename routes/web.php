@@ -8,7 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 
-// 1. LANDING PAGE
+// LANDING PAGE
 Route::get('/', function () {
     if (!auth()->check()) {
         return view('landing');
@@ -21,7 +21,7 @@ Route::get('/', function () {
     };
 })->name('landing');
 
-// 2. GUEST-ONLY ROUTES (login + register)
+//  GUEST-ONLY ROUTES (login + register)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -29,12 +29,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
-// 3. LOGOUT - available when logged in
+//  LOGOUT - available when logged in
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-// 4. AUTHENTICATED USERS - role-based routing
+//  AUTHENTICATED USERS - role-based routing
 Route::middleware('auth')->group(function () {
     
     // === Regular Users (Interns) - NOT supervisors ===

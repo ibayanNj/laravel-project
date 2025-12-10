@@ -20,7 +20,6 @@ class LogEntryController extends Controller
         return view('logs.index', compact('logs'));
     }
 
-    //display the create form
     public function create()
     {
         
