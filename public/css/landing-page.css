@@ -1,0 +1,134 @@
+:root {
+    --primary-color: #4f46e5;
+    --secondary-color: #818cf8;
+}
+
+body {
+    font-family: "Montserrat", sans-serif;
+}
+
+.hero-section {
+    background: linear-gradient(
+        135deg,
+        var(--primary-color) 0%,
+        var(--secondary-color) 100%
+    );
+    color: white;
+    padding: 100px 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.cta-button {
+    background: var(--primary-color);
+    border: none;
+    padding: 12px 32px;
+    font-size: 18px;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+    background: #4338ca;
+}
+
+.section-padding {
+    padding: 80px 0;
+}
+
+.feature-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+.glass-nav {
+    background: rgba(255, 255, 255, 0.08); /* slight transparency */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 0.8rem 0;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Glow on scroll: navbar becomes less transparent */
+.glass-nav.scrolled {
+    background: rgba(255, 255, 255, 0.9); /* lighter background */
+}
+
+/* Nav links: default (transparent) */
+.glass-nav .nav-link {
+    font-weight: 500;
+    margin-left: 0.5rem;
+    color: white; /* default on transparent */
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+/* Nav links when navbar is scrolled (light bg) */
+.glass-nav.scrolled .nav-link {
+    color: #333; /* dark color for readability */
+}
+
+/* Hover effect */
+.glass-nav .nav-link:hover {
+    color: var(--primary-color); /* highlight on hover */
+    transform: translateY(-1px);
+}
+
+/* Mobile toggle uses custom icon color */
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.glass-nav.scrolled .navbar-toggler {
+    border-color: rgba(0, 0, 0, 0.3);
+}
+
+.navbar-toggler-icon {
+    filter: invert(1);
+}
+
+.glass-nav.scrolled .navbar-toggler-icon {
+    filter: invert(0); /* dark icon on light bg */
+}
+
+/* Default: white (transparent navbar) */
+.glass-nav .navbar-brand,
+.glass-nav .navbar-brand i {
+    color: white;
+    transition: color 0.3s ease;
+}
+
+/* When navbar is scrolled (light background) */
+.glass-nav.scrolled .navbar-brand,
+.glass-nav.scrolled .navbar-brand i {
+    color: #333; /* dark color for contrast */
+}
+
+.glass-nav.scrolled {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    transform: scale(1.02);
+    transition: 0.3s ease;
+}
