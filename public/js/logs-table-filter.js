@@ -1,80 +1,119 @@
-// public/js/logs-table-filter.js
-
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
     const statusFilter = document.getElementById("statusFilter");
     const sortBy = document.getElementById("sortBy");
-    const tbody = document.querySelector("#logsTable tbody");
+    const tableBody = document.querySelector("#logsTable tbody");
     const displayedCount = document.getElementById("displayedCount");
     const totalCount = document.getElementById("totalCount");
 
-    // Safety check — if we're not on the logs page, do nothing
-    if (!tbody || !searchInput || !statusFilter || !sortBy || !displayedCount) {
-        return;
-    }
+    let allRows = Array.from(document.querySelectorAll(".log-row"));
+    const total = allRows.length;
 
     if (totalCount) {
-        totalCount.textContent = rows.length;
+        totalCount.textContent = total;
     }
 
-    const rows = Array.from(tbody.querySelectorAll(".log-row"));
-
     function filterAndSort() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        const selectedStatus = statusFilter.value; // '' means "all"
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value.toLowerCase();
 
-        let visibleRows = rows.filter((row) => {
+        // Filter rows
+        let visibleRows = allRows.filter((row) => {
             const rowText = row.textContent.toLowerCase();
-            const rowStatus = row.dataset.status;
+            const rowStatus = row.getAttribute("data-status").toLowerCase();
 
             const matchesSearch = rowText.includes(searchTerm);
             const matchesStatus =
-                !selectedStatus || rowStatus === selectedStatus;
+                statusValue === "" ||
+                statusValue === "all status" ||
+                rowStatus === statusValue;
 
             return matchesSearch && matchesStatus;
         });
 
-        // Sorting
+        // Sort rows
         const sortValue = sortBy.value;
         visibleRows.sort((a, b) => {
+            const dateA = new Date(a.getAttribute("data-date"));
+            const dateB = new Date(b.getAttribute("data-date"));
+            const hoursA = parseFloat(a.getAttribute("data-hours"));
+            const hoursB = parseFloat(a.getAttribute("data-hours"));
+
             switch (sortValue) {
                 case "date-desc":
-                    return new Date(b.dataset.date) - new Date(a.dataset.date);
+                case "latest first":
+                    return dateB - dateA;
                 case "date-asc":
-                    return new Date(a.dataset.date) - new Date(b.dataset.date);
+                case "oldest first":
+                    return dateA - dateB;
                 case "hours-desc":
-                    return (
-                        parseFloat(b.dataset.hours) -
-                        parseFloat(a.dataset.hours)
-                    );
+                    return hoursB - hoursA;
                 case "hours-asc":
-                    return (
-                        parseFloat(a.dataset.hours) -
-                        parseFloat(b.dataset.hours)
-                    );
+                    return hoursA - hoursB;
                 default:
-                    return 0;
+                    return dateB - dateA;
             }
         });
 
         // Hide all rows first
-        rows.forEach((row) => (row.style.display = "none"));
-
-        // Show and re-append in correct order
-        visibleRows.forEach((row) => {
-            row.style.display = "";
-            tbody.appendChild(row);
+        allRows.forEach((row) => {
+            row.style.display = "none";
         });
 
-        // Update counter
-        displayedCount.textContent = visibleRows.length;
+        // Show and reorder visible rows
+        visibleRows.forEach((row) => {
+            row.style.display = "";
+            tableBody.appendChild(row);
+        });
+
+        // Update count
+        if (displayedCount) {
+            displayedCount.textContent = visibleRows.length;
+        }
+
+        // Show "no results" message if needed
+        showNoResultsMessage(visibleRows.length);
+    }
+
+    function showNoResultsMessage(count) {
+        let noResultsRow = document.getElementById("noResultsRow");
+
+        if (count === 0) {
+            if (!noResultsRow) {
+                noResultsRow = document.createElement("tr");
+                noResultsRow.id = "noResultsRow";
+                noResultsRow.className = "border-0";
+                // Using Tailwind classes for consistent height
+                noResultsRow.innerHTML = `
+                     <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                         <div class="font-medium">No entries found</div>
+                        <div class="text-sm mt-1">Try adjusting your filters</div>
+                     </td>
+                `;
+                tableBody.appendChild(noResultsRow);
+            }
+            // Ensure the row is visible
+            noResultsRow.style.display = "";
+        } else {
+            if (noResultsRow) {
+                noResultsRow.style.display = "none";
+            }
+        }
     }
 
     // Event listeners
-    searchInput.addEventListener("input", filterAndSort);
-    statusFilter.addEventListener("change", filterAndSort);
-    sortBy.addEventListener("change", filterAndSort);
+    if (searchInput) {
+        searchInput.addEventListener("input", filterAndSort);
+    }
 
-    // Run once on load
+    if (statusFilter) {
+        statusFilter.addEventListener("change", filterAndSort);
+    }
+
+    if (sortBy) {
+        sortBy.addEventListener("change", filterAndSort);
+    }
+
+    // Initial sort
     filterAndSort();
 });

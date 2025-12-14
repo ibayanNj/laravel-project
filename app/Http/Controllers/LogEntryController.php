@@ -14,7 +14,7 @@ class LogEntryController extends Controller
     public function index()
     {
         Log::info('User accessing log entries index');
-        
+
         $logs = LogEntry::where('user_id', Auth::id())->orderBy('date', 'desc')->get();
 
         return view('logs.index', compact('logs'));
@@ -22,7 +22,6 @@ class LogEntryController extends Controller
 
     public function create()
     {
-        
         Log::info('User accessing create log entry form');
 
         return view('logs.create');
@@ -64,7 +63,7 @@ class LogEntryController extends Controller
     public function weeklyLogs()
     {
         Log::info('User accessing weekly logs view');
-        
+
         $logs = LogEntry::where('user_id', auth()->id())
             ->orderBy('date', 'desc')
             ->get()
@@ -97,61 +96,60 @@ class LogEntryController extends Controller
                 ];
             })
             ->values();
-            
+
         return view('logs.weekly', compact('weeklyData'));
     }
 
-    public function edit(LogEntry $log)
-    {
-        Log::info('User accessing edit log entry form');
 
-        if ($log->user_id !== Auth::id()) {
-            Log::error('Unauthorized edit attempt');
-            
-            abort(403, 'Unauthorized action.');
-        }
+public function edit(LogEntry $log)
+{
+    Log::info('User accessing edit log entry form');
 
-        return view('logs.edit', compact('log'));
+    // Check ownership
+    if ($log->user_id !== Auth::id()) {
+        Log::error('Unauthorized edit attempt');
+        abort(403, 'You are not authorized to edit this log entry.');
     }
 
-    public function update(Request $request, LogEntry $log)
-    {
-        Log::info('Attempting to update log entry');
-
-        // Ensure user can only update their own logs
-        if ($log->user_id !== Auth::id()) {
-            Log::error('Unauthorized update attempt');
-            
-            abort(403, 'Unauthorized action.');
-        }
-
-        $request->validate(
-            [
-                'date' => ['required', 'date', 'unique:log_entries,date,' . $log->id . ',id,user_id,' . Auth::id()],
-                'hours_worked' => 'required|integer|min:1',
-                'tasks' => 'required|string',
-                'skills' => 'nullable|string',
-                'challenges' => 'nullable|string',
-                'learnings' => 'nullable|string',
-            ],
-            [
-                'date.unique' => 'You have already created a log entry for this date. Please choose a different date or edit your existing entry.',
-            ],
-        );
-
-        $log->update([
-            'date' => $request->date,
-            'hours_worked' => $request->hours_worked,
-            'tasks' => $request->tasks,
-            'skills' => $request->skills,
-            'challenges' => $request->challenges,
-            'learnings' => $request->learnings,
-        ]);
-
-        Log::info('Log entry updated successfully');
-
-        return redirect()->route('logs.index')->with('success', 'Log entry updated successfully!');
+    // Check if approved
+    if ($log->status === 'approved') {
+        Log::warning('Attempt to edit approved log entry');
+        abort(403, 'Cannot edit approved log entries. This entry is locked.');
     }
+
+    return view('logs.edit', compact('log'));
+}
+
+public function update(Request $request, LogEntry $log)
+{
+    // Check ownership
+    if ($log->user_id !== Auth::id()) {
+        return redirect()->route('dashboard')
+            ->with('error', 'You are not authorized to edit this log entry.');
+    }
+
+    // Check if approved (double-check on update too)
+    if ($log->status === 'approved') {
+        return redirect()->route('logs.index')
+            ->with('error', 'Cannot update approved log entries.');
+    }
+
+    $validated = $request->validate([
+        'date' => 'required|date',
+        'hours_worked' => 'required|numeric|min:0.5|max:24',
+        'tasks' => 'required|string',
+        'skills' => 'nullable|string',
+        'challenges' => 'nullable|string',
+        'learnings' => 'nullable|string',
+    ]);
+
+    $log->update($validated);
+
+    Log::info('Log entry updated successfully');
+
+    return redirect()->route('logs.index')
+        ->with('success', 'Log entry updated successfully!');
+}
 
     public function destroy(LogEntry $log)
     {
@@ -160,7 +158,7 @@ class LogEntryController extends Controller
         // Ensure user can only delete their own logs
         if ($log->user_id !== Auth::id()) {
             Log::error('Unauthorized delete attempt');
-            
+
             abort(403, 'Unauthorized action.');
         }
 

@@ -4,57 +4,113 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-5xl mx-auto px-4">
+  <div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-6xl mx-auto px-4">
 
-        {{-- FLASH MESSAGES --}}
-        @if (session('success'))
-            <div class="mb-6 p-3 rounded bg-green-100 text-green-800 text-sm">
-                {{ session('success') }}
-            </div>
-        @endif
 
-        @if ($errors->any())
-            <div class="mb-6 p-3 rounded bg-red-100 text-red-800 text-sm">
-                <ul class="space-y-1">
-                    @foreach ($errors->all() as $error)
-                        <li>• {{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+      @if (session('success'))
+        <div class="mb-6 p-4 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm shadow-sm animate-slide-in">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {{ session('success') }}
+          </div>
+        </div>
+      @endif
 
-        {{-- HEADER --}}
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-                    <p class="text-gray-600 text-sm mt-1">Manage users</p>
-                </div>
-                <a href="{{ route('admin.users') }}"
-                    class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition">
-                    Manage Users
-                </a>
+      @if ($errors->any())
+        <div class="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm shadow-sm">
+          <div class="flex items-start gap-2">
+            <svg class="w-5 h-5 text-red-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <ul class="space-y-1">
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+        </div>
+      @endif
+
+      <div class="mb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">
+              Admin Dashboard
+            </h1>
+            <p class="text-gray-600 text-sm mt-1">Manage users and monitor system activity</p>
+          </div>
+          <a href="{{ route('admin.users') }}"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            Manage Users
+          </a>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="group relative p-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center shadow-md">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
             </div>
+            <span class="text-xs font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">Active</span>
+          </div>
+          <p class="text-gray-600 text-sm font-medium mb-1">Interns</p>
+          <p class="text-4xl font-bold text-gray-900">{{ $totalUsers }}</p>
+          <div class="mt-3 flex items-center text-xs text-gray-500">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+            Total registered
+          </div>
         </div>
 
-        {{-- STATS --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div class="p-4 bg-white rounded border">
-                <p class="text-gray-600 text-xs">Interns</p>
-                <p class="text-3xl font-bold text-gray-900 mt-1">{{ $totalUsers }}</p>
+        <div class="group relative p-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-500 flex items-center justify-center shadow-md">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              </svg>
             </div>
-            <div class="p-4 bg-white rounded border">
-                <p class="text-gray-600 text-xs">Supervisors</p>
-                <p class="text-3xl font-bold text-gray-900 mt-1">{{ $totalSupervisors }}</p>
-            </div>
-            <div class="p-4 bg-white rounded border">
-                <p class="text-gray-600 text-xs">Administrators</p>
-                <p class="text-3xl font-bold text-gray-900 mt-1">{{ $totalAdmins }}</p>
-            </div>
+            <span class="text-xs font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">Verified</span>
+          </div>
+          <p class="text-gray-600 text-sm font-medium mb-1">Supervisors</p>
+          <p class="text-4xl font-bold text-gray-900">{{ $totalSupervisors }}</p>
+          <div class="mt-3 flex items-center text-xs text-gray-500">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Monitoring interns
+          </div>
         </div>
 
+        <div class="group relative p-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-red-500 flex items-center justify-center shadow-md">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <span class="text-xs font-semibold text-red-600 bg-rose-400/40 px-3 py-1 rounded-full">Full Access</span>
+          </div>
+          <p class="text-gray-600 text-sm font-medium mb-1">Administrators</p>
+          <p class="text-4xl font-bold text-gray-900">{{ $totalAdmins }}</p>
+          <div class="mt-3 flex items-center text-xs text-gray-500">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              System managers
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-
+  </div>
 @endsection

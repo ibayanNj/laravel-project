@@ -10,9 +10,9 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <title>@yield('title', 'Internship Log Book')</title>
-
     @vite('resources/css/app.css')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     @stack('styles')
 </head>
 
@@ -21,6 +21,7 @@
     @unless (request()->routeIs('login') || request()->routeIs('register'))
         <x-navbar />
     @endunless
+    
 
     @yield('content')
 

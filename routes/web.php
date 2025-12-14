@@ -34,17 +34,16 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-//  AUTHENTICATED USERS - role-based routing
+// AUTHENTICATED USERS
 Route::middleware('auth')->group(function () {
-    
-    // === Regular Users (Interns) - NOT supervisors ===
+    //Regular Users (Interns)
     Route::middleware(RoleMiddleware::class)->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/logs/weekly', [LogEntryController::class, 'weeklyLogs'])->name('logs.weekly');
         Route::resource('logs', LogEntryController::class)->except(['show']);
     });
 
-    // === Supervisors ===
+    //Supervisors
     Route::prefix('supervisor')
         ->name('supervisor.')
         ->middleware('role:supervisor')
@@ -60,9 +59,11 @@ Route::middleware('auth')->group(function () {
             Route::post('/logs/{id}/approve', 'approve')->name('log.approve');
             Route::post('/logs/{id}/reject', 'reject')->name('log.reject');
             Route::post('/logs/{id}/reset', 'resetToPending')->name('log.reset');
+
+            Route::get('/recent-activity', [SupervisorController::class, 'recentActivity'])->name('recent-activity');
         });
 
-    // === Admins ===
+    //Admins
     Route::prefix('admin')
         ->name('admin.')
         ->middleware('admin')
